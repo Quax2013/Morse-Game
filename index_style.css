@@ -47,6 +47,11 @@ body{
     font-family: 'Times New Roman', Times, serif;
 }
 
+.el{
+    user-select: none;
+    -moz-user-select: none;
+}
+
 /* The switch - the box around the slider */
 .switch {
     position: relative;
