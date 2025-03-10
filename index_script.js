@@ -71,52 +71,7 @@ let morse = {
     "/": "-..-.",
     "@": ".--.-.",
     "(": "-.--.",
-    ")": "-.--.-",
-    "-----": "0",
-    ".----": "1",
-    "..---": "2",
-    "...--": "3",
-    "....-": "4",
-    ".....": "5",
-    "-....": "6",
-    "--...": "7",
-    "---..": "8",
-    "----.": "9",
-    ".-": "a",
-    "-...": "b",
-    "-.-.": "c",
-    "-..": "d",
-    ".": "e",
-    "..-.": "f",
-    "--.": "g",
-    "....": "h",
-    "..": "i",
-    ".---": "j",
-    "-.-": "k",
-    ".-..": "l",
-    "--": "m",
-    "-.": "n",
-    "---": "o",
-    ".--.": "p",
-    "--.-": "q",
-    ".-.": "r",
-    "...": "s",
-    "-": "t",
-    "..-": "u",
-    "...-": "v",
-    ".--": "w",
-    "-..-": "x",
-    "-.--": "y",
-    "--..": "z",
-    ".-.-.-": ".",
-    "--..--": ",",
-    "..--..": "?",
-    "-.-.--": "!",
-    "-....-": "-",
-    "-..-.": "/",
-    ".--.-.": "@",
-    "-.--.": "(",
-    "-.--.-": ")"
+    ")": "-.--.-"
 }
 
 addEventListener('DOMContentLoaded', async function () {
@@ -126,6 +81,14 @@ addEventListener('DOMContentLoaded', async function () {
     changeVolume();
     if (this.document.getElementById('random-word-switch').checked) {
         randomWordSwitch();
+    }
+
+    this.document.getElementById('straight-key').addEventListener('taphold', async function (event) {
+        event.preventDefault();
+    });
+
+    for (key in morse) {
+        morse[morse[key]] = key;
     }
 });
 
@@ -151,10 +114,6 @@ addEventListener('keyup', async function (event) {
     }
 
     this.document.getElementById('straight-key').classList.remove('active');
-});
-
-this.document.getElementById('straight-key').addEventListener('taphold', async function (event) {
-    event.preventDefault();
 });
 
 async function startMorseCode() {
