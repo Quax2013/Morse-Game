@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morse Game</title>
+    <script src="index_script.js"></script>
+    <link rel="stylesheet" href="index_style.css">
+</head>
+
+<body>
+    <h1>Morse Game</h1>
+    <div class="horizontal">
+        <input type="number" id="speed" placeholder='"Dah" length in milliseconds' value="300" onchange="changeSpeed()">
+        <div>Random words:</div>
+        <label class="switch">
+            <input type="checkbox" id="random-word-switch" onchange="randomWordSwitch()">
+            <span class="slider"></span>
+        </label>
+        <input type="number" id="length" placeholder="Word length in characters" value="5" onchange="changeLength()">
+    </div>
+    <div id="display-random-word"></div>
+    <div id="display-morse" class="display"></div>
+    <div id="display-alphanumeric" class="display"></div>
+    <button id="straight-key" onmousedown="startMorseCode()" onmouseup="evalMorseCode()"></button>
+    <div id="tone-length"></div>
+</body>
+
+</html>
