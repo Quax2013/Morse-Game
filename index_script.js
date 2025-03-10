@@ -282,7 +282,7 @@ async function getNewRandomWords(amount, lenght, language) {
         language = "&lang=" + language;
     }
 
-    let url = 'https://random-word-api.herokuapp.com/word?number=' + amount + lenght + language;
+    let url = 'https://random-word-api.vercel.app/api?words=' + amount + lenght + language;
     let response = await fetch(url);
     let data = await response.json();
 
@@ -290,6 +290,9 @@ async function getNewRandomWords(amount, lenght, language) {
 }
 
 function changeLength() {
-    let length = this.document.getElementById('length').value;
-    l
+    length = this.document.getElementById('length').value;
+}
+
+function changeLanguage() {
+    language = this.document.getElementById('language').value;
 }
