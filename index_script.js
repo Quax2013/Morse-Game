@@ -18,6 +18,14 @@ let language = 'en';
 let length = 5;
 let amount = 1;
 
+let context;
+let oscillator;
+let gain;
+
+let volume = 1;
+
+let waitForFirstInput = true;
+
 let morse = {
     "0": "-----",
     "1": ".----",
@@ -115,6 +123,7 @@ addEventListener('DOMContentLoaded', async function () {
     changeSpeed();
     changeLength();
     changeLanguage();
+    changeVolume();
     if (this.document.getElementById('random-word-switch').checked) {
         randomWordSwitch();
     }
@@ -128,6 +137,8 @@ addEventListener('keydown', async function (event) {
         event.preventDefault();
         startMorseCode();
     }
+
+    this.document.getElementById('straight-key').classList.add('active');
 });
 
 addEventListener('keyup', async function (event) {
@@ -138,9 +149,19 @@ addEventListener('keyup', async function (event) {
         event.preventDefault();
         evalMorseCode();
     }
+
+    this.document.getElementById('straight-key').classList.remove('active');
+});
+
+this.document.getElementById('straight-key').addEventListener('taphold', async function (event) {
+    event.preventDefault();
 });
 
 async function startMorseCode() {
+    if (!waitForFirstInput) {
+        gain.gain.value = 0;
+    }
+
     pressStart = new Date().getTime();
     timesPressed++;
     if (randomWords && resetFlag) {
@@ -148,6 +169,21 @@ async function startMorseCode() {
         updateAlphanumeric();
         resetFlag = false;
     }
+
+    if (waitForFirstInput) {
+        context = new (window.AudioContext || window.webkitAudioContext)();
+        oscillator = context.createOscillator();
+        gain = context.createGain();
+
+        gain.gain.value = 0;
+        oscillator.frequency.value = 750;
+        oscillator.connect(gain);
+
+        oscillator.start(0);
+        gain.connect(context.destination);
+    }
+
+    gain.gain.value = volume;
 }
 
 async function evalMorseCode() {
@@ -156,6 +192,8 @@ async function evalMorseCode() {
     let elapsedTime = currentTime - pressStart;
 
     let morseCode = '';
+
+    gain.gain.value = 0;
 
     if (elapsedTime < ditLenght * dahFactor) {
         morseCode = '.';
@@ -182,14 +220,13 @@ async function evalMorseCode() {
                 resetFlag = true;
                 if (toAlphanumeric(display.innerHTML).trim() == randomWordsArray[0].toUpperCase()) {
                     randomWordsArray.shift();
-                    if (randomWordsArray.length < 3) {
-                        getNewRandomWords(5).then(data => {
-                            randomWordsArray.concat(data);
-                        });
-                    }
                     let display = this.document.getElementById('display-random-word');
                     display.innerHTML = randomWordsArray[0].toUpperCase();
                     resetFlag = true;
+                }
+
+                if (randomWordsArray.length < 3) {
+                    refillRandomWords();
                 }
             }
         }
@@ -289,10 +326,23 @@ async function getNewRandomWords(amount, lenght, language) {
     return data;
 }
 
-function changeLength() {
+async function refillRandomWords() {
+    let newWords = await getNewRandomWords(5);
+    console.log(newWords);
+    for (let i = 0; i < newWords.length; i++) {
+        randomWordsArray.push(newWords[i]);
+    }
+    console.log(randomWordsArray);
+}
+
+async function changeVolume() {
+    volume = this.document.getElementById('volume').value / 100;
+}
+
+async function changeLength() {
     length = this.document.getElementById('length').value;
 }
 
-function changeLanguage() {
+async function changeLanguage() {
     language = this.document.getElementById('language').value;
 }

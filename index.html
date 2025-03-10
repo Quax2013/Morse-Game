@@ -27,16 +27,17 @@
             <option value="fr">French</option>
             <option value="pt">Portuguese</option>
         </select>
+        <input type="number" name="volume" id="volume" placeholder="Volume" value="50" onchange="changeVolume()">
     </div>
     <div id="display-random-word"></div>
     <div id="display-morse" class="display"></div>
     <div id="display-alphanumeric" class="display"></div>
-    <button id="straight-key" onmousedown="startMorseCode()" onmouseup="evalMorseCode()"></button>
+    <button id="straight-key" class="el" onpointerdown="startMorseCode()" onpointerup="evalMorseCode()">Straight Key</button>
     <div id="tone-length"></div>
     <div id="rules">
         <h2>Rules</h2>
-        <p>Use the round Button, Space or Enter to send morse code.</p>
-        <p>A "Dah" (the long sound) send a sound the length of 3 "Dit" (The short sound).</p>
+        <p>Use the Straight Key, Space or Enter to send morse code.</p>
+        <p>To send a "Dah" (the long sound) send a sound the length of 3 "Dit" (The short sound).</p>
         <p>To end a letter pause for the lenght of 3 "Dit"</p>
         <p>To end a word pause for the lenght of 7 "Dit".</p>  
     </div>

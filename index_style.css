@@ -23,7 +23,7 @@ body{
     color: #000000;
 }
 
-#straight-key:active{
+#straight-key:active, #straight-key.active{
     background-color: #00ff00;
     color: #000000;
 }
@@ -45,6 +45,11 @@ body{
 
 #display-morse{
     font-family: 'Times New Roman', Times, serif;
+}
+
+.el{
+    user-select: none;
+    -moz-user-select: none;
 }
 
 /* The switch - the box around the slider */
