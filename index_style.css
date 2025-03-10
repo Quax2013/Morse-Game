@@ -23,7 +23,7 @@ body{
     color: #000000;
 }
 
-#straight-key:active{
+#straight-key:active, #straight-key.active{
     background-color: #00ff00;
     color: #000000;
 }

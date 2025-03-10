@@ -128,6 +128,14 @@ addEventListener('keydown', async function (event) {
         event.preventDefault();
         startMorseCode();
     }
+
+    if (randomWordsArray.length < 3) {
+        console.log("Refilling random words array");
+        let newWords = await getNewRandomWords(5);
+        randomWordsArray.concat(newWords);
+    }
+
+    this.document.getElementById('straight-key').classList.add('active');
 });
 
 addEventListener('keyup', async function (event) {
@@ -138,6 +146,8 @@ addEventListener('keyup', async function (event) {
         event.preventDefault();
         evalMorseCode();
     }
+
+    this.document.getElementById('straight-key').classList.remove('active');
 });
 
 async function startMorseCode() {
@@ -182,11 +192,6 @@ async function evalMorseCode() {
                 resetFlag = true;
                 if (toAlphanumeric(display.innerHTML).trim() == randomWordsArray[0].toUpperCase()) {
                     randomWordsArray.shift();
-                    if (randomWordsArray.length < 3) {
-                        getNewRandomWords(5).then(data => {
-                            randomWordsArray.concat(data);
-                        });
-                    }
                     let display = this.document.getElementById('display-random-word');
                     display.innerHTML = randomWordsArray[0].toUpperCase();
                     resetFlag = true;
