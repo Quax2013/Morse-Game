@@ -37,32 +37,32 @@ let morse = {
     "7": "--...",
     "8": "---..",
     "9": "----.",
-    "a": ".-",
-    "b": "-...",
-    "c": "-.-.",
-    "d": "-..",
-    "e": ".",
-    "f": "..-.",
-    "g": "--.",
-    "h": "....",
-    "i": "..",
-    "j": ".---",
-    "k": "-.-",
-    "l": ".-..",
-    "m": "--",
-    "n": "-.",
-    "o": "---",
-    "p": ".--.",
-    "q": "--.-",
-    "r": ".-.",
-    "s": "...",
-    "t": "-",
-    "u": "..-",
-    "v": "...-",
-    "w": ".--",
-    "x": "-..-",
-    "y": "-.--",
-    "z": "--..",
+    "A": ".-",
+    "B": "-...",
+    "C": "-.-.",
+    "D": "-..",
+    "E": ".",
+    "F": "..-.",
+    "G": "--.",
+    "H": "....",
+    "I": "..",
+    "J": ".---",
+    "K": "-.-",
+    "L": ".-..",
+    "M": "--",
+    "N": "-.",
+    "O": "---",
+    "P": ".--.",
+    "Q": "--.-",
+    "R": ".-.",
+    "S": "...",
+    "T": "-",
+    "U": "..-",
+    "V": "...-",
+    "W": ".--",
+    "X": "-..-",
+    "Y": "-.--",
+    "Z": "--..",
     ".": ".-.-.-",
     ",": "--..--",
     "?": "..--..",
@@ -86,6 +86,8 @@ addEventListener('DOMContentLoaded', async function () {
     this.document.getElementById('straight-key').addEventListener('taphold', async function (event) {
         event.preventDefault();
     });
+
+    populateCharacterList();
 
     for (key in morse) {
         morse[morse[key]] = key;
@@ -203,7 +205,7 @@ function toMorseCode(alphanumeric) {
     let morseCode = '';
 
     for (let i = 0; i < alphanumeric.length; i++) {
-        let char = alphanumeric.charAt(i).toLowerCase();
+        let char = alphanumeric.charAt(i);
         if (morse[char] != undefined) {
             morseCode += morse[char] + '&#65533;';
         } else if (char == ' ') {
@@ -292,6 +294,15 @@ async function refillRandomWords() {
         randomWordsArray.push(newWords[i]);
     }
     console.log(randomWordsArray);
+}
+
+function populateCharacterList() {
+    let list = this.document.getElementById('character-list');
+    for (key in morse) {
+        let listItem = this.document.createElement('div');
+        listItem.innerHTML = key + ' = ' + morse[key];
+        list.appendChild(listItem);
+    }
 }
 
 async function changeVolume() {
