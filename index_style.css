@@ -1,6 +1,6 @@
 :root{
     font-family: 'Courier New', Courier, monospace;
-    font-size: 12px;
+    font-size: 16px;
 }
 
 body{
@@ -54,6 +54,11 @@ body{
     font-family: 'Times New Roman', Times, serif;
 }
 
+#display-random-word{
+    font-size: 3em;
+    font-weight: bold;
+}
+
 /* The switch - the box around the slider */
 .switch {
     position: relative;
@@ -95,11 +100,11 @@ body{
   }
   
   input:checked + .slider {
-    background-color: #2196F3;
+    background-color: #00ff00;
   }
   
   input:focus + .slider {
-    box-shadow: 0 0 1px #2196F3;
+    box-shadow: 0 0 1px #00ff00;
   }
   
   input:checked + .slider:before {
@@ -111,4 +116,9 @@ body{
   .horizontal{
     display: flex;
     flex-direction: row;
+  }
+
+  .horizontal > *{
+    margin: 0.5em;
+    display: block;
   }
