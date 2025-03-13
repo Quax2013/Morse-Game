@@ -16,6 +16,13 @@ body{
     border: 0.25rem solid #00ff00;
     border-radius: 100em;
     padding: 5em;
+
+    user-select: none;
+    -moz-user-select: none;
+
+    cursor: pointer;
+
+    touch-action: manipulation;
 }
 
 #straight-key:hover{
@@ -45,11 +52,6 @@ body{
 
 #display-morse{
     font-family: 'Times New Roman', Times, serif;
-}
-
-.el{
-    user-select: none;
-    -moz-user-select: none;
 }
 
 /* The switch - the box around the slider */

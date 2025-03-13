@@ -37,32 +37,32 @@ let morse = {
     "7": "--...",
     "8": "---..",
     "9": "----.",
-    "a": ".-",
-    "b": "-...",
-    "c": "-.-.",
-    "d": "-..",
-    "e": ".",
-    "f": "..-.",
-    "g": "--.",
-    "h": "....",
-    "i": "..",
-    "j": ".---",
-    "k": "-.-",
-    "l": ".-..",
-    "m": "--",
-    "n": "-.",
-    "o": "---",
-    "p": ".--.",
-    "q": "--.-",
-    "r": ".-.",
-    "s": "...",
-    "t": "-",
-    "u": "..-",
-    "v": "...-",
-    "w": ".--",
-    "x": "-..-",
-    "y": "-.--",
-    "z": "--..",
+    "A": ".-",
+    "B": "-...",
+    "C": "-.-.",
+    "D": "-..",
+    "E": ".",
+    "F": "..-.",
+    "G": "--.",
+    "H": "....",
+    "I": "..",
+    "J": ".---",
+    "K": "-.-",
+    "L": ".-..",
+    "M": "--",
+    "N": "-.",
+    "O": "---",
+    "P": ".--.",
+    "Q": "--.-",
+    "R": ".-.",
+    "S": "...",
+    "T": "-",
+    "U": "..-",
+    "V": "...-",
+    "W": ".--",
+    "X": "-..-",
+    "Y": "-.--",
+    "Z": "--..",
     ".": ".-.-.-",
     ",": "--..--",
     "?": "..--..",
@@ -71,52 +71,7 @@ let morse = {
     "/": "-..-.",
     "@": ".--.-.",
     "(": "-.--.",
-    ")": "-.--.-",
-    "-----": "0",
-    ".----": "1",
-    "..---": "2",
-    "...--": "3",
-    "....-": "4",
-    ".....": "5",
-    "-....": "6",
-    "--...": "7",
-    "---..": "8",
-    "----.": "9",
-    ".-": "a",
-    "-...": "b",
-    "-.-.": "c",
-    "-..": "d",
-    ".": "e",
-    "..-.": "f",
-    "--.": "g",
-    "....": "h",
-    "..": "i",
-    ".---": "j",
-    "-.-": "k",
-    ".-..": "l",
-    "--": "m",
-    "-.": "n",
-    "---": "o",
-    ".--.": "p",
-    "--.-": "q",
-    ".-.": "r",
-    "...": "s",
-    "-": "t",
-    "..-": "u",
-    "...-": "v",
-    ".--": "w",
-    "-..-": "x",
-    "-.--": "y",
-    "--..": "z",
-    ".-.-.-": ".",
-    "--..--": ",",
-    "..--..": "?",
-    "-.-.--": "!",
-    "-....-": "-",
-    "-..-.": "/",
-    ".--.-.": "@",
-    "-.--.": "(",
-    "-.--.-": ")"
+    ")": "-.--.-"
 }
 
 addEventListener('DOMContentLoaded', async function () {
@@ -126,6 +81,16 @@ addEventListener('DOMContentLoaded', async function () {
     changeVolume();
     if (this.document.getElementById('random-word-switch').checked) {
         randomWordSwitch();
+    }
+
+    this.document.getElementById('straight-key').addEventListener('taphold', async function (event) {
+        event.preventDefault();
+    });
+
+    populateCharacterList();
+
+    for (key in morse) {
+        morse[morse[key]] = key;
     }
 });
 
@@ -151,10 +116,6 @@ addEventListener('keyup', async function (event) {
     }
 
     this.document.getElementById('straight-key').classList.remove('active');
-});
-
-this.document.getElementById('straight-key').addEventListener('taphold', async function (event) {
-    event.preventDefault();
 });
 
 async function startMorseCode() {
@@ -244,7 +205,7 @@ function toMorseCode(alphanumeric) {
     let morseCode = '';
 
     for (let i = 0; i < alphanumeric.length; i++) {
-        let char = alphanumeric.charAt(i).toLowerCase();
+        let char = alphanumeric.charAt(i);
         if (morse[char] != undefined) {
             morseCode += morse[char] + '&#65533;';
         } else if (char == ' ') {
@@ -333,6 +294,15 @@ async function refillRandomWords() {
         randomWordsArray.push(newWords[i]);
     }
     console.log(randomWordsArray);
+}
+
+function populateCharacterList() {
+    let list = this.document.getElementById('character-list');
+    for (key in morse) {
+        let listItem = this.document.createElement('div');
+        listItem.innerHTML = key + ' = ' + morse[key];
+        list.appendChild(listItem);
+    }
 }
 
 async function changeVolume() {
