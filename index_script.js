@@ -10,9 +10,16 @@ let letterFactor = 3;
 let wordFactor = 7;
 
 let timesPressed = 0;
+let lastSign = '';
+
 let randomWords = false;
 let randomWordsArray = [];
 let resetFlag = false;
+
+let ditHold = false;
+let dahHold = false;
+
+let iambicB = false;
 
 let language = 'en';
 let length = 5;
@@ -74,6 +81,8 @@ let morse = {
     ")": "-.--.-"
 }
 
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
 addEventListener('DOMContentLoaded', async function () {
     changeSpeed();
     changeLength();
@@ -95,15 +104,44 @@ addEventListener('DOMContentLoaded', async function () {
 });
 
 addEventListener('keydown', async function (event) {
+    if (waitForFirstInput) {
+        context = new (window.AudioContext || window.webkitAudioContext)();
+        oscillator = context.createOscillator();
+        gain = context.createGain();
+
+        gain.gain.value = 0;
+        oscillator.frequency.value = 750;
+        oscillator.connect(gain);
+
+        oscillator.start(0);
+        gain.connect(context.destination);
+    }
+
     if (event.key === 'Enter' || event.key == ' ') {
         if (event.repeat) {
             return;
         }
         event.preventDefault();
         startMorseCode();
+
+        this.document.getElementById('straight-key').classList.add('active');
     }
 
-    this.document.getElementById('straight-key').classList.add('active');
+    if (event.key === '.') {
+        if (event.repeat) {
+            return;
+        }
+        event.preventDefault();
+        startAutomaticDit();
+    }
+
+    if (event.key === '-') {
+        if (event.repeat) {
+            return;
+        }
+        event.preventDefault();
+        startAutomaticDah();
+    }
 });
 
 addEventListener('keyup', async function (event) {
@@ -113,9 +151,25 @@ addEventListener('keyup', async function (event) {
         }
         event.preventDefault();
         evalMorseCode();
+
+        this.document.getElementById('straight-key').classList.remove('active');
     }
 
-    this.document.getElementById('straight-key').classList.remove('active');
+    if (event.key === '.') {
+        if (event.repeat) {
+            return;
+        }
+        event.preventDefault();
+        stopAutomaticDit();
+    }
+
+    if (event.key === '-') {
+        if (event.repeat) {
+            return;
+        }
+        event.preventDefault();
+        stopAutomaticDah();
+    }
 });
 
 async function startMorseCode() {
@@ -131,24 +185,10 @@ async function startMorseCode() {
         resetFlag = false;
     }
 
-    if (waitForFirstInput) {
-        context = new (window.AudioContext || window.webkitAudioContext)();
-        oscillator = context.createOscillator();
-        gain = context.createGain();
-
-        gain.gain.value = 0;
-        oscillator.frequency.value = 750;
-        oscillator.connect(gain);
-
-        oscillator.start(0);
-        gain.connect(context.destination);
-    }
-
     gain.gain.value = volume;
 }
 
-async function evalMorseCode() {
-    let display = this.document.getElementById('display-morse');
+async function evalMorseCode(bypass = false) {
     let currentTime = new Date().getTime();
     let elapsedTime = currentTime - pressStart;
 
@@ -162,28 +202,30 @@ async function evalMorseCode() {
         morseCode = '-';
     }
 
+    if (!bypass) addMorseCode(morseCode);
+
+    this.document.getElementById('tone-length').innerHTML = elapsedTime;
+
+    checkPauseLenght();
+}
+
+async function checkPauseLenght() {
+    let display = this.document.getElementById('display-morse');
     let timesPressedSaved = timesPressed;
 
     setTimeout(async () => {
         if (timesPressedSaved == timesPressed) {
-            display.innerHTML += ' ';
-            display.scrollLeft = display.scrollWidth;
+            addMorseCode(" ");
         }
     }, ditLenght * letterFactor);
     setTimeout(async () => {
         if (timesPressedSaved == timesPressed) {
-            display.innerHTML += ' / ';
-            display.scrollLeft = display.scrollWidth;
-
-            console.log(toAlphanumeric(display.innerHTML).trim());
+            addMorseCode(" / ");
 
             if (randomWords) {
                 resetFlag = true;
                 if (toAlphanumeric(display.innerHTML).trim() == randomWordsArray[0].toUpperCase()) {
-                    randomWordsArray.shift();
-                    let display = this.document.getElementById('display-random-word');
-                    display.innerHTML = randomWordsArray[0].toUpperCase();
-                    resetFlag = true;
+                    nextRandomWord();
                 }
 
                 if (randomWordsArray.length < 3) {
@@ -192,13 +234,16 @@ async function evalMorseCode() {
             }
         }
     }, ditLenght * wordFactor);
+}
 
-    display.innerHTML += morseCode;
+function addMorseCode(sign) {
+    let display = this.document.getElementById('display-morse');
+    display.innerHTML += sign;
     display.scrollLeft = display.scrollWidth;
 
-    this.document.getElementById('tone-length').innerHTML = elapsedTime;
-
     updateAlphanumeric();
+
+    lastSign = sign;
 }
 
 function toMorseCode(alphanumeric) {
@@ -249,6 +294,7 @@ async function updateAlphanumeric() {
     let alphanumeric = toAlphanumeric(morseCode);
 
     display.innerHTML = alphanumeric;
+    display.scrollLeft = display.scrollWidth;
 }
 
 async function randomWordSwitch() {
@@ -295,6 +341,12 @@ async function refillRandomWords() {
     }
     console.log(randomWordsArray);
 }
+function nextRandomWord() {
+    randomWordsArray.shift();
+    let display = this.document.getElementById('display-random-word');
+    display.innerHTML = randomWordsArray[0].toUpperCase();
+    resetFlag = true;
+}
 
 function populateCharacterList() {
     let list = this.document.getElementById('character-list');
@@ -315,4 +367,62 @@ async function changeLength() {
 
 async function changeLanguage() {
     language = this.document.getElementById('language').value;
+}
+
+async function changeKey() {
+    let selction = this.document.getElementById('key').value;
+}
+
+async function startAutomaticDit() {
+    let saveTimesPressed = timesPressed;
+    ditHold = true;
+
+    if (randomWords && resetFlag) {
+        this.document.getElementById('display-morse').innerHTML = '';
+        updateAlphanumeric();
+        resetFlag = false;
+    }
+
+    while (ditHold && saveTimesPressed == timesPressed) {
+        timesPressed++;
+        saveTimesPressed++;
+        addMorseCode('.');
+        gain.gain.value = volume;
+        await delay(ditLenght);
+        gain.gain.value = 0;
+        await delay(ditLenght);
+    }
+    if (saveTimesPressed == timesPressed) checkPauseLenght();
+}
+
+async function stopAutomaticDit() {
+    console.log('stop');
+    ditHold = false;
+}
+
+async function startAutomaticDah() {
+    let saveTimesPressed = timesPressed;
+    dahHold = true;
+
+    if (randomWords && resetFlag) {
+        this.document.getElementById('display-morse').innerHTML = '';
+        updateAlphanumeric();
+        resetFlag = false;
+    }
+
+    while (dahHold && saveTimesPressed == timesPressed) {
+        timesPressed++;
+        saveTimesPressed++;
+        addMorseCode('-');
+        gain.gain.value = volume;
+        await delay(ditLenght * dahFactor);
+        gain.gain.value = 0;
+        await delay(ditLenght);
+    }
+    if (saveTimesPressed == timesPressed) checkPauseLenght();
+}
+
+async function stopAutomaticDah() {
+    console.log('stop');
+    dahHold = false;
 }

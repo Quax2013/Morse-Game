@@ -10,7 +10,7 @@ body{
     padding: 0;
 }
 
-#straight-key{
+.morse-key{
     background-color: #000000;
     color: #00ff00;
     border: 0.25rem solid #00ff00;
@@ -25,12 +25,12 @@ body{
     touch-action: manipulation;
 }
 
-#straight-key:hover{
+.morse-key:hover{
     background-color: #003300;
     color: #000000;
 }
 
-#straight-key:active, #straight-key.active{
+.morse-key:active, .morse-key.active{
     background-color: #00ff00;
     color: #000000;
 }
