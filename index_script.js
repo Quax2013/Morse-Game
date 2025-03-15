@@ -392,12 +392,14 @@ async function startAutomaticDit() {
         gain.gain.value = 0;
         await delay(ditLenght);
     }
+    gain.gain.value = 0;
     if (saveTimesPressed == timesPressed) checkPauseLenght();
 }
 
 async function stopAutomaticDit() {
     console.log('stop');
     ditHold = false;
+    gain.gain.value = 0;
 }
 
 async function startAutomaticDah() {
@@ -419,10 +421,12 @@ async function startAutomaticDah() {
         gain.gain.value = 0;
         await delay(ditLenght);
     }
+    gain.gain.value = 0;
     if (saveTimesPressed == timesPressed) checkPauseLenght();
 }
 
 async function stopAutomaticDah() {
     console.log('stop');
     dahHold = false;
+    gain.gain.value = 0;
 }

@@ -43,7 +43,6 @@
         <div>
             <div>Volume:</div>
             <input type="number" name="volume" id="volume" placeholder="Volume" value="50" onchange="changeVolume()">
-
         </div>
     </div>
     <div id="display-random-word"></div>
@@ -51,15 +50,29 @@
     <div id="display-alphanumeric" class="display"></div>
     <div>
         <div>Key type:</div>
-        <select name="key" id="key"></select>
-        <option value="straight">Straight Key:</option>
+        <select name="key" id="key">
+            <option value="straight">Straight Key:</option>
+            <option value="dual-lever">Dual-Lever Key</option>
+        </select>
     </div>
     <div id="straight-key-container">
-        <button id="straight-key" class="morse-key" onpointerdown="startMorseCode()" onpointerup="evalMorseCode()"></button>
+        <button id="straight-key" class="morse-key" onpointerdown="startMorseCode()"
+            onpointerup="evalMorseCode()"></button>
     </div>
     <div id="dual-lever-key-container">
-        <button id="dual-lever-key-dit" class="morse-key" onpointerdown="startAutomaticDit()" onpointerup="stopAutomaticDit()"></button>
-        <button id="dual-lever-key-dah" class="morse-key" onpointerdown="startAutomaticDah()" onpointerup="stopAutomaticDah()"></button>
+        <button id="dual-lever-key-dit" class="morse-key" onpointerdown="startAutomaticDit()"
+            onpointerup="stopAutomaticDit()"></button>
+        <button id="dual-lever-key-dah" class="morse-key" onpointerdown="startAutomaticDah()"
+            onpointerup="stopAutomaticDah()"></button>
+        <div>
+            <div>
+                Iambic Type:
+            </div>
+            <select name="iambic" id="iambic">
+                <option value="a">A</option>
+                <option value="b">B</option>
+            </select>
+        </div>
     </div>
     <div>
         Last tone length:
