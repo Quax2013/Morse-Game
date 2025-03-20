@@ -16,6 +16,7 @@ let randomWords = false;
 let randomWordsArray = [];
 let resetFlag = false;
 
+let automaticRunning = false;
 let ditHold = false;
 let dahHold = false;
 
@@ -374,59 +375,108 @@ async function changeKey() {
 }
 
 async function startAutomaticDit() {
-    let saveTimesPressed = timesPressed;
     ditHold = true;
-
-    if (randomWords && resetFlag) {
-        this.document.getElementById('display-morse').innerHTML = '';
-        updateAlphanumeric();
-        resetFlag = false;
+    if (!automaticRunning) {
+        runAutomatic();
     }
-
-    while (ditHold && saveTimesPressed == timesPressed) {
-        timesPressed++;
-        saveTimesPressed++;
-        addMorseCode('.');
-        gain.gain.value = volume;
-        await delay(ditLenght);
-        gain.gain.value = 0;
-        await delay(ditLenght);
-    }
-    gain.gain.value = 0;
-    if (saveTimesPressed == timesPressed) checkPauseLenght();
 }
 
 async function stopAutomaticDit() {
-    console.log('stop');
     ditHold = false;
-    gain.gain.value = 0;
 }
 
 async function startAutomaticDah() {
-    let saveTimesPressed = timesPressed;
     dahHold = true;
-
-    if (randomWords && resetFlag) {
-        this.document.getElementById('display-morse').innerHTML = '';
-        updateAlphanumeric();
-        resetFlag = false;
-    }
-
-    while (dahHold && saveTimesPressed == timesPressed) {
-        timesPressed++;
-        saveTimesPressed++;
-        addMorseCode('-');
-        gain.gain.value = volume;
-        await delay(ditLenght * dahFactor);
-        gain.gain.value = 0;
-        await delay(ditLenght);
-    }
-    gain.gain.value = 0;
-    if (saveTimesPressed == timesPressed) checkPauseLenght();
 }
 
 async function stopAutomaticDah() {
-    console.log('stop');
     dahHold = false;
-    gain.gain.value = 0;
 }
+
+async function runAutomatic() {
+    automaticRunning = true;
+    while (ditHold || dahHold) {
+        if (ditHold && dahHold) {
+            if (lastSign == '.') {
+                addMorseCodeLocal('-');
+            } else if (lastSign == '-') {
+                addMorseCodeLocal('.');
+            }
+        } else if (ditHold) {
+            addMorseCodeLocal('.');
+        } else if (dahHold) {
+            addMorseCodeLocal('-');
+        }
+    }
+    automaticRunning = false;
+
+    async function addMorseCodeLocal(sign) {
+        addMorseCode(sign);
+        gain.gain.value = volume;
+        if (sign == '.') {
+            await delay(ditLenght);
+        } else if (sign == '-') {
+            await delay(ditLenght * dahFactor);
+        }
+        gain.gain.value = 0;
+        await delay(ditLenght);
+    }
+}
+
+// async function startAutomaticDit() {
+//     let saveTimesPressed = timesPressed;
+//     ditHold = true;
+
+//     if (randomWords && resetFlag) {
+//         this.document.getElementById('display-morse').innerHTML = '';
+//         updateAlphanumeric();
+//         resetFlag = false;
+//     }
+
+//     while (ditHold && saveTimesPressed == timesPressed) {
+//         timesPressed++;
+//         saveTimesPressed++;
+//         addMorseCode('.');
+//         gain.gain.value = volume;
+//         await delay(ditLenght);
+//         gain.gain.value = 0;
+//         await delay(ditLenght);
+//     }
+//     gain.gain.value = 0;
+//     if (saveTimesPressed == timesPressed) checkPauseLenght();
+// }
+
+// async function stopAutomaticDit() {
+//     console.log('stop');
+//     ditHold = false;
+//     gain.gain.value = 0;
+// }
+
+// async function startAutomaticDah() {
+//     let saveTimesPressed = timesPressed;
+//     dahHold = true;
+
+//     if (randomWords && resetFlag) {
+//         this.document.getElementById('display-morse').innerHTML = '';
+//         updateAlphanumeric();
+//         resetFlag = false;
+//     }
+
+//     while (dahHold && saveTimesPressed == timesPressed) {
+//         timesPressed++;
+//         saveTimesPressed++;
+//         addMorseCode('-');
+//         gain.gain.value = volume;
+//         await delay(ditLenght * dahFactor);
+//         gain.gain.value = 0;
+//         await delay(ditLenght);
+//     }
+//     gain.gain.value = 0;
+//     if (saveTimesPressed == timesPressed) checkPauseLenght();
+// }
+
+// async function stopAutomaticDah() {
+//     console.log('stop');
+//     dahHold = false;
+//     gain.gain.value = 0;
+// }
