@@ -43,21 +43,53 @@
         <div>
             <div>Volume:</div>
             <input type="number" name="volume" id="volume" placeholder="Volume" value="50" onchange="changeVolume()">
-
         </div>
     </div>
     <div id="display-random-word"></div>
     <div id="display-morse" class="display"></div>
     <div id="display-alphanumeric" class="display"></div>
-    <button id="straight-key" class="el" onpointerdown="startMorseCode()" onpointerup="evalMorseCode()">Straight
-        Key</button>
+    <div>
+        <div>Key type:</div>
+        <select name="key" id="key" onchange="changeKey()">
+            <option value="straight">Straight Key:</option>
+            <option value="dual-lever">Dual-Lever Key</option>
+        </select>
+    </div>
+    <div id="key-containers">
+        <div id="straight-key-container">
+            <button id="straight-key" class="morse-key" onpointerdown="startMorseCode()"
+                onpointerup="evalMorseCode()"></button>
+        </div>
+        <div id="dual-lever-key-container">
+            <button id="dual-lever-key-dit" class="morse-key" onpointerdown="startAutomaticDit()"
+                onpointerup="stopAutomaticDit()"></button>
+            <button id="dual-lever-key-dah" class="morse-key" onpointerdown="startAutomaticDah()"
+                onpointerup="stopAutomaticDah()"></button>
+            <div class="horizontal">
+                <div>
+                    <div>
+                        Iambic Mode:
+                    </div>
+                    <select name="iambic" id="iambic" onchange="changeIambic()">
+                        <option value="a">Mode A</option>
+                        <option value="b">Mode B</option>
+                    </select>
+                </div>
+                <div>
+                    <div>Iambic release tolerance:</div>
+                    <input type="number" name="iambic-tolerance" id="iambic-tolerance"
+                        placeholder="Iambic release tolerance" value="30" onchange="changeIambicTolerance()">
+                </div>
+            </div>
+        </div>
+    </div>
     <div>
         Last tone length:
         <div id="tone-length"></div>
     </div>
     <div id="rules">
         <h2>Rules</h2>
-        <p>Use the Straight Key, Space or Enter to send morse code.</p>
+        <p>Use the Straight Key, Space or Enter to send morse code using the Straight Key.</p>
         <p>To send a "Dah" (the long sound) send a sound the length of 3 "Dit" (The short sound).</p>
         <p>To end a letter pause for the lenght of 3 "Dit"</p>
         <p>To end a word pause for the lenght of 7 "Dit".</p>
