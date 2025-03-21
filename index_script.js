@@ -19,8 +19,12 @@ let resetFlag = false;
 let automaticRunning = false;
 let ditHold = false;
 let dahHold = false;
+let ditHoldStop = new Date().getTime();
+let dahHoldStop = new Date().getTime();
 
+let selectedKey = 'straight';
 let iambicB = false;
+let iambicTolerance = 30;
 
 let language = 'en';
 let length = 5;
@@ -89,6 +93,9 @@ addEventListener('DOMContentLoaded', async function () {
     changeLength();
     changeLanguage();
     changeVolume();
+    changeKey();
+    changeIambic();
+    changeIambicTolerance();
     if (this.document.getElementById('random-word-switch').checked) {
         randomWordSwitch();
     }
@@ -118,7 +125,7 @@ addEventListener('keydown', async function (event) {
         gain.connect(context.destination);
     }
 
-    if (event.key === 'Enter' || event.key == ' ') {
+    if (selectedKey == 'straight' && (event.key === 'Enter' || event.key == ' ')) {
         if (event.repeat) {
             return;
         }
@@ -128,25 +135,29 @@ addEventListener('keydown', async function (event) {
         this.document.getElementById('straight-key').classList.add('active');
     }
 
-    if (event.key === '.') {
+    if (selectedKey == 'dual-lever' && event.key === '.') {
         if (event.repeat) {
             return;
         }
         event.preventDefault();
         startAutomaticDit();
+
+        this.document.getElementById('dual-lever-key-dit').classList.add('active');
     }
 
-    if (event.key === '-') {
+    if (selectedKey == 'dual-lever' && event.key === '-') {
         if (event.repeat) {
             return;
         }
         event.preventDefault();
         startAutomaticDah();
+
+        this.document.getElementById('dual-lever-key-dah').classList.add('active');
     }
 });
 
 addEventListener('keyup', async function (event) {
-    if (event.key === 'Enter' || event.key == ' ') {
+    if (selectedKey == 'straight' && (event.key === 'Enter' || event.key == ' ')) {
         if (event.repeat) {
             return;
         }
@@ -162,6 +173,8 @@ addEventListener('keyup', async function (event) {
         }
         event.preventDefault();
         stopAutomaticDit();
+
+        this.document.getElementById('dual-lever-key-dit').classList.remove('active');
     }
 
     if (event.key === '-') {
@@ -170,6 +183,8 @@ addEventListener('keyup', async function (event) {
         }
         event.preventDefault();
         stopAutomaticDah();
+
+        this.document.getElementById('dual-lever-key-dah').classList.remove('active');
     }
 });
 
@@ -281,13 +296,6 @@ function toAlphanumeric(morseCode) {
     return alphanumeric;
 }
 
-
-async function changeSpeed() {
-    let speed = this.document.getElementById('speed').value;
-    dahLenght = speed;
-    ditLenght = dahLenght / 3;
-}
-
 async function updateAlphanumeric() {
     let display = this.document.getElementById('display-alphanumeric');
     let morseCode = this.document.getElementById('display-morse').innerHTML;
@@ -358,6 +366,12 @@ function populateCharacterList() {
     }
 }
 
+async function changeSpeed() {
+    let speed = this.document.getElementById('speed').value;
+    dahLenght = speed;
+    ditLenght = dahLenght / 3;
+}
+
 async function changeVolume() {
     volume = this.document.getElementById('volume').value / 100;
 }
@@ -371,7 +385,33 @@ async function changeLanguage() {
 }
 
 async function changeKey() {
-    let selction = this.document.getElementById('key').value;
+    selectedKey = this.document.getElementById('key').value;
+    let keyContainers = this.document.getElementById('key-containers');
+
+    for (let i = 0; i < keyContainers.children.length; i++) {
+        keyContainers.children[i].style.display = 'none';
+    }
+
+    if (selectedKey == 'straight') {
+        this.document.getElementById('straight-key-container').style.display = 'block';
+    } else if (selectedKey == 'dual-lever') {
+        this.document.getElementById('dual-lever-key-container').style.display = 'block';
+    }
+}
+
+async function changeIambic() {
+    let type = this.document.getElementById('iambic').value;
+    if (type == 'a') {
+        iambicB = false;
+        document.getElementById('iambic-tolerance').disabled = true;
+    } else {
+        iambicB = true;
+        document.getElementById('iambic-tolerance').disabled = false;
+    }
+}
+
+async function changeIambicTolerance() {
+    iambicTolerance = this.document.getElementById('iambic-tolerance').value;
 }
 
 async function startAutomaticDit() {
@@ -383,35 +423,59 @@ async function startAutomaticDit() {
 
 async function stopAutomaticDit() {
     ditHold = false;
+    ditHoldStop = new Date().getTime();
 }
 
 async function startAutomaticDah() {
     dahHold = true;
+    if (!automaticRunning) {
+        runAutomatic();
+    }
 }
 
 async function stopAutomaticDah() {
     dahHold = false;
+    dahHoldStop = new Date().getTime();
 }
 
 async function runAutomatic() {
     automaticRunning = true;
+
+    if (randomWords && resetFlag) {
+        this.document.getElementById('display-morse').innerHTML = '';
+        updateAlphanumeric();
+        resetFlag = false;
+    }
+
     while (ditHold || dahHold) {
         if (ditHold && dahHold) {
             if (lastSign == '.') {
-                addMorseCodeLocal('-');
+                await addMorseCodeLocal('-');
             } else if (lastSign == '-') {
-                addMorseCodeLocal('.');
+                await addMorseCodeLocal('.');
             }
         } else if (ditHold) {
-            addMorseCodeLocal('.');
+            await addMorseCodeLocal('.');
         } else if (dahHold) {
-            addMorseCodeLocal('-');
+            await addMorseCodeLocal('-');
         }
     }
     automaticRunning = false;
 
+    if (iambicB && Math.abs(ditHoldStop - dahHoldStop) < iambicTolerance) {
+        console.log(Math.abs(ditHoldStop - dahHoldStop));
+        if (lastSign == '.') {
+            await addMorseCodeLocal('-');
+        } else if (lastSign == '-') {
+            await addMorseCodeLocal('.');
+        }
+    }
+
+    checkPauseLenght();
+
     async function addMorseCodeLocal(sign) {
         addMorseCode(sign);
+        timesPressed++;
         gain.gain.value = volume;
         if (sign == '.') {
             await delay(ditLenght);

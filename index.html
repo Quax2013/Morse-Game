@@ -50,28 +50,37 @@
     <div id="display-alphanumeric" class="display"></div>
     <div>
         <div>Key type:</div>
-        <select name="key" id="key">
+        <select name="key" id="key" onchange="changeKey()">
             <option value="straight">Straight Key:</option>
             <option value="dual-lever">Dual-Lever Key</option>
         </select>
     </div>
-    <div id="straight-key-container">
-        <button id="straight-key" class="morse-key" onpointerdown="startMorseCode()"
-            onpointerup="evalMorseCode()"></button>
-    </div>
-    <div id="dual-lever-key-container">
-        <button id="dual-lever-key-dit" class="morse-key" onpointerdown="startAutomaticDit()"
-            onpointerup="stopAutomaticDit()"></button>
-        <button id="dual-lever-key-dah" class="morse-key" onpointerdown="startAutomaticDah()"
-            onpointerup="stopAutomaticDah()"></button>
-        <div>
-            <div>
-                Iambic Type:
+    <div id="key-containers">
+        <div id="straight-key-container">
+            <button id="straight-key" class="morse-key" onpointerdown="startMorseCode()"
+                onpointerup="evalMorseCode()"></button>
+        </div>
+        <div id="dual-lever-key-container">
+            <button id="dual-lever-key-dit" class="morse-key" onpointerdown="startAutomaticDit()"
+                onpointerup="stopAutomaticDit()"></button>
+            <button id="dual-lever-key-dah" class="morse-key" onpointerdown="startAutomaticDah()"
+                onpointerup="stopAutomaticDah()"></button>
+            <div class="horizontal">
+                <div>
+                    <div>
+                        Iambic Mode:
+                    </div>
+                    <select name="iambic" id="iambic" onchange="changeIambic()">
+                        <option value="a">Mode A</option>
+                        <option value="b">Mode B</option>
+                    </select>
+                </div>
+                <div>
+                    <div>Iambic release tolerance:</div>
+                    <input type="number" name="iambic-tolerance" id="iambic-tolerance"
+                        placeholder="Iambic release tolerance" value="30" onchange="changeIambicTolerance()">
+                </div>
             </div>
-            <select name="iambic" id="iambic">
-                <option value="a">Type A</option>
-                <option value="b">Type B</option>
-            </select>
         </div>
     </div>
     <div>
